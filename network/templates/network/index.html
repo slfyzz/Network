@@ -1,0 +1,41 @@
+{% extends "network/layout.html" %}
+
+{% block title%}
+
+    Home
+
+{% endblock%}
+{% block script %}
+    {% load static %}
+    <script src="{% static 'network/profile.js' %}"></script>
+{% endblock %}
+{% block body %}
+    <div id = "info">
+
+        <h3 id="userName">
+            {{ user.userName }}
+        </h3>
+        
+        <span> Followers : {{ user.followers|length }}</span> <span>Following : {{ user.following|length }}</span>
+    </div>
+
+    <div id="newPostDiv">
+        <form id="newPostForm">
+            <div class="form-group">
+                <h3> New Post </h3>
+                <textarea class="form-control" rows="3" id="newPost"></textarea>   
+            </div>
+            <button id="postButton" type="button" class="btn btn-primary"> Post </button>
+        </form>     
+    </div>
+
+    <div id="posts">
+        <ul id="postsContainer" class="list-group">
+        </ul>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="pag">
+        </ul>
+    </nav>
+{% endblock %}
