@@ -20,10 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
     paginatorTemp = Handlebars.compile(document.querySelector('#paginatorTemp').innerHTML);
     //console.log("HERE");
     loadHome();
-    document.querySelector('#following').addEventListener('click', loadfollowing);
+    
+    if (document.querySelector('#following') !== null)
+        document.querySelector('#following').addEventListener('click', loadfollowing);
+    
     document.querySelector('#network').addEventListener('click', loadHome);
     document.querySelector('#allPosts').addEventListener('click', loadHome)
-    document.querySelector('#postButton').addEventListener('click', post);
+    
+    if (document.querySelector('#postButton') !== null)
+        document.querySelector('#postButton').addEventListener('click', post);
 
     //loadPosts(1);
 
@@ -75,6 +80,9 @@ document.addEventListener('click', e => {
         }
         else if (currentPage === "Following") {
             loadAllPosts(parseInt(target.dataset.link), true);
+        }
+        else if (currentPage === "profile") {
+            loadPostsforProfile(parseInt(target.dataset.link));
         } 
 
     }
@@ -94,7 +102,8 @@ function loadfollowing() {
 function loadHome() {
     currentPage = "Home";
     document.querySelector('#info').style.display = 'none';
-    document.querySelector('#newPostDiv').style.display = 'block';
+    if (document.querySelector('#newPostDiv') !== null)
+        document.querySelector('#newPostDiv').style.display = 'block';
     loadAllPosts(1);
 }
 
@@ -103,7 +112,7 @@ function loadAllPosts(page, following=false) {
     fetch(`/posts/${following}/${page}`)
     .then(response => response.json())
     .then(data => {
-        document.querySelector('#postsContainer').innerHTML = postTemp({'post' : data.posts});
+        document.querySelector('#postsContainer').innerHTML = postTemp({'post' : data.posts, 'login' : data.login});
         loadPaginators(data.paginator, page);
 
         console.log(data);
@@ -130,13 +139,14 @@ function loadPaginators(paginator, currentPage) {
 
 
 function loadProfile(userName) {
-
+    currentPage = 'profile';
     const profile =  document.querySelector('#info');
     fetch(`/profile/${userName}`)
     .then(response => response.json())
     .then(data => {
         profile.style.display = 'block';
-        document.querySelector('#newPostDiv').style.display = 'none';
+        if (document.querySelector('#newPostDiv') !== null)
+            document.querySelector('#newPostDiv').style.display = 'none';
         profile.innerHTML = profileTemp(data);
         loadPostsforProfile(1);
     })
@@ -152,7 +162,9 @@ function loadPostsforProfile(page) {
     .then(response => response.json())
     .then(data => {
         const posts = data.posts;
-        document.querySelector('#postsContainer').innerHTML = postTemp({'post' : posts});
+        document.querySelector('#postsContainer').innerHTML = postTemp({'post' : posts, 'login' : data.login});
+        loadPaginators(data.paginator, page);
+
     })
     .catch(e => console.log(e));
 

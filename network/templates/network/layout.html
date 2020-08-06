@@ -25,7 +25,11 @@
                             <button class="edit"> Edit </button>
                         {{/ifEquals}}
                         <hr>
-                        <div><span class="likes"><button class="like">{{#if this.liked}} Unlike {{else}} Like {{/if}} </button> : <span class="numOfLikes">{{ len this.likes }}</span> </span> <span class="postTime" style="float: right;" >{{this.timestamp}} </span></div>
+                        {{#if ../login}}
+                            <div><span class="likes"><button class="like">{{#if this.liked}} Unlike {{else}} Like {{/if}} </button> : <span class="numOfLikes">{{ len this.likes }}</span> </span> <span class="postTime" style="float: right;" >{{this.timestamp}} </span></div>
+                        {{else}}
+                            <div><span class="likes"><button class="like" disabled>{{#if this.liked}} Unlike {{else}} Like  {{/if}} </button> : <span class="numOfLikes">{{ len this.likes }}</span> </span> <span class="postTime" style="float: right;" >{{this.timestamp}} </span></div>
+                        {{/if}}
                     </li>
                 {{/each}}
             {% endverbatim %}
@@ -38,9 +42,11 @@
                     </h3>
                     <span> Followers : <span id="followers">{{ len profile.followers }}</span></span> <span>Following : {{ len profile.following}}</span>
                     <br>
-                    {{#ifNEquals user profile.userName}}
-                        <button id="follow" type="button" class="btn btn-primary">{{#if followed}} UnFollow {{else}} Follow {{/if}}</button>
-                    {{/ifNEquals}}
+                    {{#if login}}
+                        {{#ifNEquals user profile.userName}}   
+                            <button id="follow" type="button" class="btn btn-primary">{{#if followed}} UnFollow {{else}} Follow {{/if}}</button>
+                        {{/ifNEquals}}
+                    {{/if}}
 
                 </div>
             {% endverbatim %}
@@ -55,8 +61,8 @@
     </head>
     <body>
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#" id="network">Network</a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 50px;">
+            <a class="navbar-brand" href="{% url 'index' %}" id="network">Network</a>
           
             <div>
               <ul class="navbar-nav mr-auto">
@@ -66,7 +72,7 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                  <a class="nav-link" href="#" id="allPosts">All Posts</a>
+                  <a class="nav-link" href="{% url 'index' %}" id="allPosts">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">

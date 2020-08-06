@@ -8,6 +8,7 @@
 {% block script %}
     {% load static %}
     <script src="{% static 'network/profile.js' %}"></script>
+
 {% endblock %}
 {% block body %}
     <div id = "info">
@@ -19,15 +20,17 @@
         <span> Followers : {{ user.followers|length }}</span> <span>Following : {{ user.following|length }}</span>
     </div>
 
-    <div id="newPostDiv">
-        <form id="newPostForm">
-            <div class="form-group">
-                <h3> New Post </h3>
-                <textarea class="form-control" rows="3" id="newPost"></textarea>   
-            </div>
-            <button id="postButton" type="button" class="btn btn-primary"> Post </button>
-        </form>     
-    </div>
+    {% if user.is_authenticated %}
+        <div id="newPostDiv">
+            <form id="newPostForm">
+                <div class="form-group">
+                    <h3> New Post </h3>
+                    <textarea class="form-control" rows="3" id="newPost"></textarea>   
+                </div>
+                <button id="postButton" type="button" class="btn btn-primary"> Post </button>
+            </form>     
+        </div>
+    {% endif %}
 
     <div id="posts">
         <ul id="postsContainer" class="list-group">

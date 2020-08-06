@@ -12,10 +12,7 @@ from .models import User, Post
 
 
 def index(request):
-    if not request.user.is_authenticated:
-        return render(request, "network/login.html")
-    else:
-        return render(request, "network/index.html") 
+    return render(request, "network/index.html") 
 
 @csrf_exempt
 @login_required
@@ -49,17 +46,23 @@ def profile(request, username):
         user = User.objects.get(username=username)
     except User.DoesNotExist:
         raise Http404("Not found")
-    context = {
-        'profile' : user.serialize(request.user),
-        'user' : request.user.username,
-        'followed' : user in request.user.following.all()
-    }
-    if request.user.is_authenticated: 
-        return JsonResponse(context, safe=False)
-    else: 
-        return render(request, 'network/profile', context=context)
+    if request.user.is_authenticated:
+        context = {
+            'profile' : user.serialize(request.user),
+            'user' : request.user.username or 'None',
+            'followed' : user in request.user.following.all(),
+            'login' : request.user.is_authenticated
+        }
+    else :
+        context = {
+            'profile' : user.serialize(request.user),   
+            'user' : 'None',
+            'login' : request.user.is_authenticated
+        }
+    
+    return JsonResponse(context, safe=False)
 
-@login_required
+
 def postsByName(request, username, page):
 
     try:
@@ -75,7 +78,8 @@ def postsByName(request, username, page):
 
     context = {
         'posts' : [post.serialize(request.user) for post in p.page(page).object_list],  
-        'paginator' : ls
+        'paginator' : ls,
+        'login' : request.user.is_authenticated
       
     }
     return JsonResponse(context,  safe=False)
@@ -98,13 +102,12 @@ def posts(request, page, following):
 
     context = {
         'posts' : [post.serialize(request.user) for post in p.page(page).object_list],
-        'paginator' : ls
+        'paginator' : ls,
+        'login' : request.user.is_authenticated
         }
 
-    if request.user.is_authenticated:
-        return JsonResponse(context , safe=False)
-    else:
-        return render(request, 'network/posts', context=context)
+    return JsonResponse(context , safe=False)
+ 
 
 
 def showPosts(request, page):
