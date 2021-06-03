@@ -17,10 +17,8 @@ def index(request):
 @csrf_exempt
 @login_required
 def post(request):
-
     if request.method != "POST":
         return JsonResponse({"error" : "Post is required"}, status=400)
-
     try:
         data = json.loads(request.body)
         postBody = data.get("post")
@@ -29,19 +27,16 @@ def post(request):
     except KeyError:
         return JsonResponse({"error" : "Can't Post empty post"}, status=400)
 
-
     post = Post(
         owner=request.user,
         body=postBody
     )
     post.save()
-
     return JsonResponse({'message':"The post has been uploaded Successfully"})
 
 
 # need a profile page
 def profile(request, username):
-
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
@@ -59,12 +54,10 @@ def profile(request, username):
             'user' : 'None',
             'login' : request.user.is_authenticated
         }
-    
     return JsonResponse(context, safe=False)
 
 
 def postsByName(request, username, page):
-
     try:
         user = User.objects.get(username=username)
     except User.DoesNotExist:
@@ -72,10 +65,8 @@ def postsByName(request, username, page):
     
     posts = user.posts.order_by('-timeStamp')
     p = Paginator(posts, 10)
-
     ls = paginator(page, p)
-
-
+    
     context = {
         'posts' : [post.serialize(request.user) for post in p.page(page).object_list],  
         'paginator' : ls,
@@ -92,14 +83,12 @@ def posts(request, page, following):
         posts = Post.objects.filter(owner__in=request.user.following.all()).order_by('-timeStamp')
     else:
         posts = Post.objects.order_by('-timeStamp')
-
+        
     p = Paginator(posts, 10)
-
     if page > p.num_pages:
         return JsonResponse({'error' : "there's no posts in that page"})
 
     ls = paginator(page, p)
-
     context = {
         'posts' : [post.serialize(request.user) for post in p.page(page).object_list],
         'paginator' : ls,
@@ -116,12 +105,9 @@ def showPosts(request, page):
 @csrf_exempt
 @login_required
 def editPost(request):
-
     if request.method != 'PUT':
         return JsonResponse({'error' : "must be accessed by PUT request"})
-
     data = json.loads(request.body)
-
     try:
         postId = data.get('id')
         body = data.get('body')
@@ -141,10 +127,8 @@ def editPost(request):
 @csrf_exempt
 @login_required
 def follow(request):
-
     if request.method != 'PUT':
         return JsonResponse({'error' : "must be accessed by PUT request"})
-
     try :
         data = json.loads(request.body)
         user = int(data.get('user'))
@@ -231,7 +215,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
