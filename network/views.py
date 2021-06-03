@@ -260,6 +260,4 @@ def paginator(page, p):
     elif page > 1 and page < p.num_pages:
         ls.append(page + 1)
         ls.insert(0, page -1)
-
-
     return ls
